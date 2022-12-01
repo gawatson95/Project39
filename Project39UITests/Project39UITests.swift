@@ -48,6 +48,29 @@ final class Project39UITests: XCTestCase {
         filterAlert.buttons["OK"].tap()
         
         XCTAssertEqual(app.tables.cells.count, 56, "There should be 56 words matching 'test'")
+    }
+    
+    func testUserFilteringWithNumber() {
+        XCUIApplication().activate()
         
+        let app = XCUIApplication()
+        app.navigationBars["Title"].buttons["Filter"].tap()
+        
+        let elementsQuery = app.alerts["Filter words"].scrollViews.otherElements
+        elementsQuery.collectionViews.cells.children(matching: .other).element.children(matching: .other).element.children(matching: .other).element.children(matching: .other).element(boundBy: 1).children(matching: .textField).element.typeText("1000")
+        elementsQuery.buttons["OK"].tap()
+        
+        XCTAssertEqual(app.tables.cells.count, 55, "There should be 55 words that appear 1,000 times or more.")
+    }
+    
+    func testCancelButtonPressed() {
+        XCUIApplication().activate()
+        let app = XCUIApplication()
+        
+        let originalCount = app.tables.cells.count
+        app.navigationBars["Title"].buttons["Filter"].tap()
+        app.alerts["Filter words"].scrollViews.otherElements.buttons["Cancel"].tap()
+        
+        XCTAssertEqual(app.tables.cells.count, originalCount, "The cell count should equal the inital count at startup")
     }
 }
